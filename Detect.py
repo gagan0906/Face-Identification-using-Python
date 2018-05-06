@@ -1,5 +1,8 @@
 import cv2
 import numpy
+from database_conn import database
+db=database()
+
 
 face=cv2.CascadeClassifier('face.xml')
 cap=cv2.VideoCapture(0)
@@ -16,7 +19,11 @@ while True:
         for (x,y,w,h) in faces:
             cv2.rectangle(frame,(x,y),(x+w,y+h),(0,255,0),3);
             id, conf=rec.predict(gray[y:y+h,x:x+w]);
-            cv2.cv.PutText(cv2.cv.fromarray(frame),str(id),(x+w,y+h+20),font,(0,0,255))
+            rows=db.display(id)
+            id_ , name, age=rows[0]
+            cv2.cv.PutText(cv2.cv.fromarray(frame),str('Name:'+name),(x,y+h+20),font,(0,0,255))
+            cv2.cv.PutText(cv2.cv.fromarray(frame),str('Age:'+str(age)),(x,y+h+40),font,(0,0,255))
+
         cv2.imshow('Frame',frame)
         if cv2.waitKey(1)==ord('q'):
             break
